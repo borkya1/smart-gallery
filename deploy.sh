@@ -3,9 +3,13 @@
 # Exit on error
 set -e
 
-# Load .env if exists
-if [ -f .env ]; then
-  export $(grep -v '^#' .env | xargs)
+# Load .env.prod if exists (Prioritize Production Config)
+if [ -f .env.prod ]; then
+    echo "📜 Loading Production Config from .env.prod..."
+    export $(grep -v '^#' .env.prod | xargs)
+elif [ -f .env ]; then
+    echo "⚠️  Warning: Loading config from .env (Make sure this is PROD config)..."
+    export $(grep -v '^#' .env | xargs)
 fi
 
 # Configuration

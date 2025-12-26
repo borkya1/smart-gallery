@@ -36,19 +36,46 @@ firestore_client = firestore.Client(project=PROJECT_ID)
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Collections
-IMAGES_COLLECTION = "images"
+IMAGES_COLLECTION = os.getenv("FIRESTORE_COLLECTION", "images")
+
+# Firebase Admin Setup
+import firebase_admin
+from firebase_admin import credentials, auth
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends
+
+# Initialize Firebase Admin (uses GOOGLE_APPLICATION_CREDENTIALS automatically)
+if not firebase_admin._apps:
+    firebase_admin.initialize_app()
+
+security = HTTPBearer()
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    try:
+        decoded_token = auth.verify_id_token(token)
+        return decoded_token
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid authentication token")
 
 @app.get("/")
 def health_check():
     return {"status": "ok", "message": "SmartGallery Backend is running"}
 
 @app.post("/upload")
-async def upload_image(file: UploadFile = File(...)):
+async def upload_image(
+    file: UploadFile = File(...), 
+    user_token: dict = Depends(verify_token)
+):
     """
     1. Upload image to GCS
     2. Analyze with OpenAI Vision
     3. Save metadata to Firestore
     """
+    # User ID from token
+    user_id = user_token['uid']
+    user_email = user_token.get('email', 'unknown')
+    
     if not GCS_BUCKET_NAME:
         raise HTTPException(status_code=500, detail="GCS_BUCKET_NAME not configured")
 
@@ -116,7 +143,9 @@ async def upload_image(file: UploadFile = File(...)):
             "filename": file.filename,
             "blob_name": blob_name, 
             "tags": tags,
-            "created_at": firestore.SERVER_TIMESTAMP
+            "created_at": firestore.SERVER_TIMESTAMP,
+            "uploaded_by": user_email, # Track user
+            "user_id": user_id
         }
         doc_ref.set(doc_data)
 

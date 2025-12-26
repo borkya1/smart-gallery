@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 venv/
 .env
+.env.prod
 
 # Node
 node_modules/
@@ -12,3 +13,7 @@ dist/
 
 # Mac
 .DS_Store
+
+#Personal 
+AG_RULES.md
+
