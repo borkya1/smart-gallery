@@ -7,7 +7,10 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Initialize Firebase Admin
 if not firebase_admin._apps:
-    firebase_admin.initialize_app()
+    try:
+        firebase_admin.initialize_app()
+    except Exception as e:
+        print(f"Warning: Firebase Admin failed to initialize: {e}")
 
 security = HTTPBearer()
 
@@ -18,6 +21,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
     token = credentials.credentials
     try:
+        decoded_token = auth.verify_id_token(token)
         return decoded_token
     except Exception as e:
         # print(f"Auth Error: {e}") # Debug log

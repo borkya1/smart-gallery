@@ -2,6 +2,7 @@
 
 # Exit on error
 set -e
+set -x
 
 # Load .env.prod if exists (Prioritize Production Config)
 if [ -f .env.prod ]; then
@@ -51,7 +52,7 @@ gcloud run deploy $BACKEND_SERVICE \
     --region $REGION \
     --platform managed \
     --allow-unauthenticated \
-    --set-env-vars="GCS_BUCKET_NAME=$GCS_BUCKET_NAME,OPENAI_API_KEY=$OPENAI_API_KEY,GOOGLE_CLOUD_PROJECT=$PROJECT_ID" \
+    --set-env-vars="GCS_BUCKET_NAME=$GCS_BUCKET_NAME,OPENAI_API_KEY=$OPENAI_API_KEY,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,SENDGRID_API_KEY=$SENDGRID_API_KEY,SENDGRID_FROM_EMAIL=$SENDGRID_FROM_EMAIL" \
     --quiet
 
 # Get Backend URL
@@ -69,8 +70,31 @@ echo "🏗️  Building Frontend..."
 # Let's create a temporary .env.production for the build
 echo "VITE_API_URL=$BACKEND_URL" > frontend/.env.production
 
+# Restore CLIENT_IMAGE definition
 CLIENT_IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$FRONTEND_SERVICE:latest"
-gcloud builds submit frontend --tag "$CLIENT_IMAGE" --quiet
+
+# Generate cloudbuild.yaml dynamically to avoid substitution headaches
+cat > frontend/cloudbuild.yaml <<EOF
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '--no-cache',
+      '-t', '$CLIENT_IMAGE',
+      '--build-arg', 'VITE_API_URL=$BACKEND_URL',
+      '--build-arg', 'VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY',
+      '--build-arg', 'VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN',
+      '--build-arg', 'VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID',
+      '--build-arg', 'VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET',
+      '--build-arg', 'VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID',
+      '--build-arg', 'VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID',
+      '.'
+    ]
+images:
+  - '$CLIENT_IMAGE'
+EOF
+
+gcloud builds submit frontend --config frontend/cloudbuild.yaml --quiet
 
 # Rm temp file
 rm frontend/.env.production
