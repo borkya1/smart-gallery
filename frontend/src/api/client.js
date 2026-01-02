@@ -57,6 +57,32 @@ export const api = {
 
         const data = await response.json();
         return (data.results || []).map(normalizeUrl);
+    },
+
+    /**
+     * Send OTP to email
+     */
+    sendOtp: async (email) => {
+        const response = await fetch(`${API_URL}/auth/send-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        if (!response.ok) throw new Error("Failed to send OTP");
+        return await response.json();
+    },
+
+    /**
+     * Verify OTP code
+     */
+    verifyOtp: async (email, code) => {
+        const response = await fetch(`${API_URL}/auth/verify-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code })
+        });
+        if (!response.ok) throw new Error("Invalid OTP");
+        return await response.json();
     }
 };
 

@@ -30,3 +30,8 @@ def get_firestore_collection():
     if not firestore_client:
          raise Exception("Firestore Client not configured")
     return firestore_client.collection(FIRESTORE_COLLECTION)
+
+def get_firestore_client():
+    if not firestore_client:
+         raise Exception("Firestore Client not configured")
+    return firestore_client

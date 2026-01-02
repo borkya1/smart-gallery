@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
@@ -26,25 +27,47 @@ export default function Login() {
     }
 
     return (
-        <div style={{ maxWidth: '400px', margin: '4rem auto' }}>
-            <div className="glass-panel" style={{ padding: '2rem' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Log In</h2>
-                {error && <div style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem' }}>{error}</div>}
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left' }}>
-                        <label>Email</label>
-                        <input type="text" ref={emailRef} required />
+        <div style={{ maxWidth: '440px', margin: '4rem auto', fontFamily: 'Inter, sans-serif' }}>
+            <div className="glass-panel" style={{ padding: '2.5rem', borderRadius: '16px', background: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
+
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Welcome Back</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        Sign in to continue to SmartGallery
+                    </p>
+                </div>
+
+                {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', padding: '0.8rem', borderRadius: '0.5rem', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
+
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                    <div style={{ textAlign: 'left' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '500' }}>Email Address</label>
+                        <input
+                            type="email"
+                            ref={emailRef}
+                            required
+                            placeholder="name@example.com"
+                            style={{ width: '100%', boxSizing: 'border-box', padding: '0.8rem 1rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem' }}
+                        />
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left' }}>
-                        <label>Password</label>
-                        <input type="password" ref={passwordRef} required style={{ width: '100%', padding: '0.8rem 1.2rem', borderRadius: '0.5rem', background: 'var(--card-bg)', border: '1px solid var(--border-color)', color: 'white' }} />
+                    <div style={{ textAlign: 'left' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '500' }}>Password</label>
+                        <input
+                            type="password"
+                            ref={passwordRef}
+                            required
+                            placeholder="Enter your password"
+                            style={{ width: '100%', boxSizing: 'border-box', padding: '0.8rem 1rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem' }}
+                        />
                     </div>
-                    <button disabled={loading} type="submit" style={{ marginTop: '1rem', background: 'var(--accent-color)' }}>
-                        Log In
+
+                    <button disabled={loading} type="submit" style={{ marginTop: '0.5rem', background: 'linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)', color: 'white', padding: '0.9rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '1rem' }}>
+                        {loading ? "Signing In..." : "Sign In"}
                     </button>
                 </form>
-                <div style={{ marginTop: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                    Need an account? <Link to="/signup" style={{ color: 'var(--accent-color)' }}>Sign Up</Link>
+
+                <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                    Need an account? <Link to="/signup" style={{ color: '#7c3aed', textDecoration: 'none', fontWeight: '600' }}>Sign Up</Link>
                 </div>
             </div>
         </div>

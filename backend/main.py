@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import Routers
-from routers import images
+from routers import images, auth
 
 # Initialize App
 app = FastAPI()
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(images.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def health_check():
