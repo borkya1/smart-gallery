@@ -364,6 +364,9 @@ export default function Signup() {
                 <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                     Already have an account? <Link to="/login" style={{ color: '#7c3aed', textDecoration: 'none', fontWeight: '600' }}>Sign In</Link>
                 </div>
+                <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                    <Link to="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>← Back to Home</Link>
+                </div>
             </div>
         </div>
     )
