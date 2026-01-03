@@ -46,9 +46,11 @@ button {
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
+
 button:hover {
   border-color: var(--accent-color);
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -57,10 +59,15 @@ button:focus-visible {
 .upload-zone {
   border: 2px dashed var(--border-color);
   border-radius: 1rem;
-  padding: 3rem;
+  padding: 1.5rem;
+  /* Reduced from 3rem */
   transition: all 0.3s ease;
   cursor: pointer;
   background: rgba(30, 41, 59, 0.5);
+  max-width: 500px;
+  /* Limit width */
+  margin: 0 auto;
+  /* Center it */
 }
 
 .upload-zone.active {
@@ -75,7 +82,8 @@ input[type="text"] {
   padding: 0.8rem 1.2rem;
   border-radius: 0.5rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
+  /* Increased from 400px */
   font-size: 1rem;
 }
 

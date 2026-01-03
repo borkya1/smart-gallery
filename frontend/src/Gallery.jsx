@@ -1,27 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
-export function Gallery({ images, loadImages }) {
-    const [query, setQuery] = useState("");
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        loadImages(query);
-    };
+export function Gallery({ images }) {
+    if (!images) return null;
 
     return (
-        <div style={{ marginTop: '3rem' }}>
-            <div className="glass-panel" style={{ padding: '1rem', display: 'inline-block', marginBottom: '2rem' }}>
-                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '1rem' }}>
-                    <input
-                        type="text"
-                        placeholder="Search tags (e.g., 'cat', 'sunset')..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-
+        <div style={{ marginTop: '0' }}>
             <div className="gallery-grid">
                 {images.map((img) => (
                     <div key={img.id} className="image-card glass-panel">
@@ -40,7 +23,9 @@ export function Gallery({ images, loadImages }) {
             </div>
 
             {images.length === 0 && (
-                <p style={{ color: 'var(--text-secondary)' }}>No images found. Try uploading one!</p>
+                <div style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--text-secondary)' }}>
+                    <p>No images found.</p>
+                </div>
             )}
         </div>
     )

@@ -72,58 +72,38 @@ async def upload_image(
         print(f"Error processing upload: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+from services.gallery import get_recent_images_for_user, search_images_for_user
+
 @router.get("/search")
-def search_images(tag: str = Query(..., min_length=1)):
+def search_images(
+    tag: str = Query(..., min_length=1),
+    user_token: dict = Depends(verify_token)
+):
     """
     Search images using in-memory fuzzy matching (MVP)
     """
-    docs = get_firestore_collection().stream()
-    search_term = tag.lower()
-    
-    image_list = []
-    for doc in docs:
-        data = doc.to_dict()
-        tags = [t.lower() for t in data.get("tags", [])]
-        
-        if any(search_term in t for t in tags):
-            # Reconstruct Proxy URL
-            if "blob_name" in data:
-                filename = data["blob_name"].split("/")[-1]
-                data["url"] = f"/images/{filename}"
-            elif "url" in data and "storage.googleapis.com" in data["url"]:
-                 try:
-                    filename = data["url"].split("/")[-1]
-                    data["url"] = f"/images/{filename}"
-                 except:
-                    pass
-            image_list.append(data)
-            
-    return {"results": image_list}
+    user_id = user_token['uid']
+    return {"results": search_images_for_user(user_id, tag)}
 
 @router.get("/images")
-def get_recent_images(limit: int = 20):
+def get_recent_images(
+    limit: int = 20,
+    user_token: dict = Depends(verify_token)
+):
     """
-    Get most recently uploaded images
+    Get most recently uploaded images for the user
     """
-    query = get_firestore_collection().order_by("created_at", direction=firestore.Query.DESCENDING).limit(limit)
-    results = query.stream()
-    
-    image_list = []
-    for doc in results:
-        data = doc.to_dict()
-        # Reconstruct Proxy URL
-        if "blob_name" in data:
-            filename = data["blob_name"].split("/")[-1]
-            data["url"] = f"/images/{filename}"
-        elif "url" in data and "storage.googleapis.com" in data["url"]:
-             try:
-                filename = data["url"].split("/")[-1]
-                data["url"] = f"/images/{filename}"
-             except:
-                pass
-        image_list.append(data)
+    user_id = user_token['uid']
 
-    return {"results": image_list}
+    try:
+        results = get_recent_images_for_user(user_id, limit)
+        return {"results": results}
+    except Exception as e:
+        print(f"Firestore Query Error: {e}")
+        # Identify if it's an index error
+        if "bit.ly" in str(e) or "FAILED_PRECONDITION" in str(e):
+             raise HTTPException(status_code=500, detail="Firestore Index Required. Check backend logs for creation link.")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/images/{filename}")
 async def get_image(filename: str):

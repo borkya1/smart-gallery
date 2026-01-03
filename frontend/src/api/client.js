@@ -40,8 +40,11 @@ export const api = {
     /**
      * Search for images by tag
      */
-    searchImages: async (tag) => {
-        const response = await fetch(`${API_URL}/search?tag=${encodeURIComponent(tag)}`);
+    searchImages: async (tag, currentUser) => {
+        const headers = await getAuthHeaders(currentUser);
+        const response = await fetch(`${API_URL}/search?tag=${encodeURIComponent(tag)}`, {
+            headers: headers
+        });
         if (!response.ok) throw new Error("Search failed");
 
         const data = await response.json();
@@ -51,8 +54,11 @@ export const api = {
     /**
      * Get recent images
      */
-    getRecentImages: async () => {
-        const response = await fetch(`${API_URL}/images`);
+    getRecentImages: async (currentUser) => {
+        const headers = await getAuthHeaders(currentUser);
+        const response = await fetch(`${API_URL}/images`, {
+            headers: headers
+        });
         if (!response.ok) throw new Error("Failed to load images");
 
         const data = await response.json();

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import { UploadZone } from './UploadZone'
 import { Gallery } from './Gallery'
@@ -11,6 +10,7 @@ import Login from "./pages/Login"
 
 function Home() {
   const [images, setImages] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { currentUser } = useAuth();
 
   const handleUpload = async (file) => {
@@ -25,36 +25,60 @@ function Home() {
   };
 
   const loadImages = async (tag) => {
+    if (!currentUser) {
+      setImages([]);
+      return;
+    }
+
     try {
       let results;
       if (!tag) {
-        results = await api.getRecentImages();
+        results = await api.getRecentImages(currentUser);
       } else {
-        results = await api.searchImages(tag);
+        results = await api.searchImages(tag, currentUser);
       }
       setImages(results);
     } catch (e) {
       console.error(e);
-      alert("Failed to load images");
+      // alert("Failed to load images"); 
     }
   };
 
   useEffect(() => {
     loadImages();
-  }, []);
+  }, [currentUser]);
 
   return (
     <div>
       <Navbar />
 
-      {currentUser && <UploadZone onUpload={handleUpload} />}
-      {!currentUser && (
+      {!currentUser ? (
         <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
-          <p>Please Log In to upload images.</p>
+          <p>Please Log In to view your gallery.</p>
+        </div>
+      ) : (
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem' }}>
+
+          <div style={{ marginBottom: '2rem' }}>
+            <form onSubmit={(e) => { e.preventDefault(); loadImages(searchQuery); }} style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <input
+                type="text"
+                placeholder="Find images by content tags ( e.g. 'blue sky')"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="submit">Search</button>
+            </form>
+          </div>
+
+          <div style={{ marginBottom: '3rem' }}>
+            <UploadZone onUpload={handleUpload} />
+          </div>
+
         </div>
       )}
 
-      <Gallery images={images} loadImages={loadImages} />
+      {currentUser && <Gallery images={images} />}
     </div>
   )
 }

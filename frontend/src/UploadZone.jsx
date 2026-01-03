@@ -62,13 +62,18 @@ export function UploadZone({ onUpload }) {
             {uploading ? (
                 <p>Analyze & Uploading... 🤖</p>
             ) : (
-                <div>
-                    <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
-                        Drag & Drop your image here
-                    </p>
-                    <p style={{ color: 'var(--text-secondary)' }}>
-                        or click to select
-                    </p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--accent-color)' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <div style={{ textAlign: 'left' }}>
+                        <p style={{ fontSize: '1rem', fontWeight: 'bold', margin: 0 }}>
+                            Drag & Drop your image here
+                        </p>
+                        <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.8rem' }}>
+                            or click to select
+                        </p>
+                    </div>
                 </div>
             )}
         </div>

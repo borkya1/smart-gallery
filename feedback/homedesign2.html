@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartGallery - Dashboard Option 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+
+<body class="bg-slate-950 text-slate-200 h-screen overflow-hidden flex">
+
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between p-6">
+        <div>
+            <div class="mb-10">
+                <h1 class="text-xl font-bold text-white">SmartGallery</h1>
+                <p class="text-xs text-slate-500">AI-Powered Search</p>
+            </div>
+
+            <button
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl flex items-center justify-center gap-2 transition-colors font-medium mb-8 group">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                New Upload
+            </button>
+
+            <nav class="space-y-2">
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 bg-slate-800/50 text-blue-400 rounded-lg font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    All Images
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 rounded-lg transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Recent
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 rounded-lg transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Tags
+                </a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-slate-800/30 rounded-lg">
+            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center font-bold">S</div>
+            <span class="text-sm truncate">swapnil.santosh...</span>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-950">
+        <div class="p-6 border-b border-slate-800/50 flex justify-between items-center">
+            <div class="relative w-96">
+                <input type="text" placeholder="Search gallery..."
+                    class="w-full bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl py-3 px-5 pl-11 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:outline-none transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute left-3 top-3 text-slate-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <button class="text-slate-400 hover:text-white border border-slate-700 px-4 py-2 rounded-lg text-sm">Log
+                Out</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="aspect-square relative rounded-xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1545912976-78289ab5d484?q=80&w=2969&auto=format&fit=crop"
+                        alt="SRK"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <div>
+                            <p class="text-white font-medium">Mumbai Scene</p>
+                            <p class="text-slate-300 text-xs">#iconic #open arms +5</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aspect-square relative rounded-xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=2832&auto=format&fit=crop"
+                        alt="Golden Gate"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <div>
+                            <p class="text-white font-medium">Golden Gate</p>
+                            <p class="text-slate-300 text-xs">#bridge #sunset +3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="aspect-square relative rounded-xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1596496356953-2457e036c372?q=80&w=2940&auto=format&fit=crop"
+                        alt="Cubes"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <div>
+                            <p class="text-white font-medium">Abstract Blocks</p>
+                            <p class="text-slate-300 text-xs">#colorful #shapes +8</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="aspect-square bg-slate-900 border-2 border-dashed border-slate-800 rounded-xl flex flex-col items-center justify-center text-slate-500 hover:border-blue-500 hover:text-blue-400 transition-colors cursor-pointer group">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-10 w-10 mb-2 group-hover:-translate-y-1 transition-transform" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <span>Drop to upload</span>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
