@@ -19,7 +19,11 @@ export const api = {
      * Upload an image file
      */
     uploadImage: async (file, currentUser) => {
-        const headers = await getAuthHeaders(currentUser);
+        let headers = {};
+        if (currentUser) {
+            headers = await getAuthHeaders(currentUser);
+        }
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -30,7 +34,12 @@ export const api = {
         });
 
         if (!response.ok) {
-            throw new Error('Upload failed');
+            let errorMsg = 'Upload failed';
+            try {
+                const errorData = await response.json();
+                if (errorData.detail) errorMsg = errorData.detail;
+            } catch (e) { }
+            throw new Error(errorMsg);
         }
 
         let data = await response.json();

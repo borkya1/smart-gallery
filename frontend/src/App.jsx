@@ -18,6 +18,12 @@ function Home() {
       const result = await api.uploadImage(file, currentUser);
       console.log("Uploaded:", result);
       setImages(prev => [result, ...prev]);
+
+      // Guest: Persist to Local Storage
+      if (!currentUser) {
+        const stored = JSON.parse(localStorage.getItem('guest_images') || '[]');
+        localStorage.setItem('guest_images', JSON.stringify([result, ...stored]));
+      }
     } catch (e) {
       console.error(e);
       alert(e.message || "Upload failed");
@@ -26,7 +32,9 @@ function Home() {
 
   const loadImages = async (tag) => {
     if (!currentUser) {
-      setImages([]);
+      // Guest: Load from Local Storage
+      const stored = JSON.parse(localStorage.getItem('guest_images') || '[]');
+      setImages(stored);
       return;
     }
 
@@ -53,8 +61,17 @@ function Home() {
       <Navbar />
 
       {!currentUser ? (
-        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
-          <p>Please Log In to view your gallery.</p>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem' }}>
+
+          <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
+            <h2 style={{ margin: '0 0 1rem 0' }}>Welcome to Smart Gallery</h2>
+            <p style={{ margin: 0 }}>Try it out! You can upload 10 images for free (no login required).</p>
+          </div>
+
+          <div style={{ marginBottom: '3rem' }}>
+            <UploadZone onUpload={handleUpload} />
+          </div>
+
         </div>
       ) : (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem' }}>
@@ -78,7 +95,7 @@ function Home() {
         </div>
       )}
 
-      {currentUser && <Gallery images={images} />}
+      <Gallery images={images} />
     </div>
   )
 }

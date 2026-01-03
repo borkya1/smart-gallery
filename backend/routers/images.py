@@ -1,10 +1,11 @@
 
 import uuid
 import base64
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query, Request
 from fastapi.responses import Response
 from google.cloud import firestore
-from services.auth import verify_token
+from services.auth import verify_token, get_current_user_optional
+from services.limits import check_guest_limit, check_user_limit
 from services.gcs import get_bucket, get_firestore_collection, GCS_BUCKET_NAME
 from services.analyze import analyze_image_with_vision
 
@@ -12,17 +13,35 @@ router = APIRouter()
 
 @router.post("/upload")
 async def upload_image(
+    request: Request,
     file: UploadFile = File(...), 
-    user_token: dict = Depends(verify_token)
+    user_token: dict = Depends(get_current_user_optional)
 ):
     """
-    1. Upload image to GCS
-    2. Analyze with OpenAI Vision
-    3. Save metadata to Firestore
+    1. Check Usage Limits (User vs Guest)
+    2. Upload image to GCS
+    3. Analyze with OpenAI Vision
+    4. Save metadata to Firestore
     """
-    # User ID from token
-    user_id = user_token['uid']
-    user_email = user_token.get('email', 'unknown')
+    
+    # Determine Identity & Check Limits
+    user_id = None
+    user_email = "guest"
+    
+    if user_token:
+        # Logged-in User
+        user_id = user_token['uid']
+        user_email = user_token.get('email', 'unknown')
+        check_user_limit(user_id)
+    else:
+        # Guest
+        # In Cloud Run (behind proxy), use X-Forwarded-For
+        forwarded = request.headers.get("X-Forwarded-For")
+        if forwarded:
+            ip = forwarded.split(",")[0]
+        else:
+            ip = request.client.host
+        check_guest_limit(ip)
     
     if not GCS_BUCKET_NAME:
         raise HTTPException(status_code=500, detail="GCS_BUCKET_NAME not configured")
@@ -53,8 +72,8 @@ async def upload_image(
             "blob_name": blob_name, 
             "tags": tags,
             "created_at": firestore.SERVER_TIMESTAMP,
-            "uploaded_by": user_email, # Track user
-            "user_id": user_id
+            "uploaded_by": user_email, 
+            "user_id": user_id # None for guests
         }
         doc_ref.set(doc_data)
 
@@ -68,6 +87,8 @@ async def upload_image(
             "id": file_id
         }
 
+    except HTTPException as he:
+        raise he
     except Exception as e:
         print(f"Error processing upload: {e}")
         raise HTTPException(status_code=500, detail=str(e))

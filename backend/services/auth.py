@@ -13,6 +13,7 @@ if not firebase_admin._apps:
         print(f"Warning: Firebase Admin failed to initialize: {e}")
 
 security = HTTPBearer()
+security_optional = HTTPBearer(auto_error=False)
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
@@ -26,6 +27,20 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     except Exception as e:
         # print(f"Auth Error: {e}") # Debug log
         raise HTTPException(status_code=401, detail="Invalid authentication token")
+
+def get_current_user_optional(credentials: HTTPAuthorizationCredentials = Depends(security_optional)):
+    """
+    Optional token verification. Returns decoded token if valid, None otherwise.
+    Does NOT raise 401.
+    """
+    if not credentials:
+        return None
+    try:
+        token = credentials.credentials
+        decoded_token = auth.verify_id_token(token)
+        return decoded_token
+    except:
+        return None
 
 def check_user_exists(email: str) -> bool:
     """
