@@ -73,28 +73,10 @@ echo "VITE_API_URL=$BACKEND_URL" > frontend/.env.production
 # Restore CLIENT_IMAGE definition
 CLIENT_IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$FRONTEND_SERVICE:latest"
 
-# Generate cloudbuild.yaml dynamically to avoid substitution headaches
-cat > frontend/cloudbuild.yaml <<EOF
-steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'build',
-      '--no-cache',
-      '-t', '$CLIENT_IMAGE',
-      '--build-arg', 'VITE_API_URL=$BACKEND_URL',
-      '--build-arg', 'VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY',
-      '--build-arg', 'VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN',
-      '--build-arg', 'VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID',
-      '--build-arg', 'VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET',
-      '--build-arg', 'VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID',
-      '--build-arg', 'VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID',
-      '.'
-    ]
-images:
-  - '$CLIENT_IMAGE'
-EOF
-
-gcloud builds submit frontend --config frontend/cloudbuild.yaml --quiet
+# Using the committed cloudbuild.yaml template with substitutions
+gcloud builds submit frontend --config frontend/cloudbuild.yaml \
+    --substitutions=_VITE_API_URL="$BACKEND_URL",_VITE_FIREBASE_API_KEY="$VITE_FIREBASE_API_KEY",_VITE_FIREBASE_AUTH_DOMAIN="$VITE_FIREBASE_AUTH_DOMAIN",_VITE_FIREBASE_PROJECT_ID="$VITE_FIREBASE_PROJECT_ID",_VITE_FIREBASE_STORAGE_BUCKET="$VITE_FIREBASE_STORAGE_BUCKET",_VITE_FIREBASE_MESSAGING_SENDER_ID="$VITE_FIREBASE_MESSAGING_SENDER_ID",_VITE_FIREBASE_APP_ID="$VITE_FIREBASE_APP_ID" \
+    --quiet
 
 # Rm temp file
 rm frontend/.env.production
